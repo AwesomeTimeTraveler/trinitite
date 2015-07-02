@@ -13,9 +13,5 @@ int main(int argc, char** argv) {
   MainGame mainGame;
   mainGame.run();
 
-  cout << "Enter any key to shit:" << endl;
-  int a;
-  cin >> a;
-
   return 0;
 }

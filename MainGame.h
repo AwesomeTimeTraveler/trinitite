@@ -8,6 +8,8 @@
 #include <thread>
 #include <iostream>
 
+enum class GameState {PLAY, EXIT};
+
 class MainGame {
 
 public:
@@ -16,11 +18,17 @@ public:
 
   void run();
 
-  void initSystems(); // Initialize everything, GLEW, GLFW, etc.
 
 private:
+  void initSystems(); // Initialize everything, GLEW, GLFW, etc.
+  void gameLoop();
+  void processInput();
+  void drawGame();
+  void shutDown();
+
+
   GLFWwindow* _mainWindow;
   int _screenWidth;
   int _screenHeight;
-
+  GameState _gameState;
 };
