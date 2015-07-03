@@ -1,15 +1,11 @@
 #include "MainGame.h"
+#include "errors.h"
+
 #include <string>
+
 using namespace std;
 
-void fatalError(string errorString){
-  cout << errorString << endl;
-  cout << "Enter any key to quit..." << endl;
-  int tmp;
-  cin >> tmp;
-  glfwTerminate();
-}
-
+//Constructor, just initializes private member variables
 MainGame::MainGame(){
   _mainWindow = nullptr; // Initialized main window
   _screenWidth = 800;
@@ -17,19 +13,28 @@ MainGame::MainGame(){
   _gameState = GameState::PLAY;
 }
 
+//Destructor
 MainGame::~MainGame(){
 
 }
 
+//This runs the game
 void MainGame::run(){
   initSystems();
+
+  //Initialize our sprite. (temporary)
+  _sprite.init(-1.0f, -1.0f, 1.0f, 1.0f);
+
+  //This only returns when the game ends
   gameLoop();
 }
 
-void MainGame::initSystems(){\
+//Initialize GLFW and OpenGL and everything else
+void MainGame::initSystems(){
   // Initialize GLFW
   glfwInit();
 
+  //Using OpenGL 3.2
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -37,6 +42,7 @@ void MainGame::initSystems(){\
 
   glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
+  //Open a GLFW window
   _mainWindow = glfwCreateWindow(_screenWidth, _screenHeight, "trinitite", nullptr, nullptr);
 
   if(_mainWindow == nullptr){
@@ -53,16 +59,28 @@ void MainGame::initSystems(){\
     fatalError("Could not initialize glew!");
   }
 
-  glClearColor(0.0f, 1.0f, 0.0f, 1.0);
+  //Set the background color to blue
+  glClearColor(0.0f, 0.0f, 1.0f, 1.0);
+
+  initShaders();
 }
 
+void MainGame::initShaders(){
+  _colorProgram.compileShaders("shaders/colorshader.vert", "shaders/colorshader.frag");
+  _colorProgram.addAttribute("vertexPosition");
+  _colorProgram.linkShaders();
+}
+
+//This is the main game loop of the program
 void MainGame::gameLoop(){
+  //While loop until we set _gameState to EXIT
   while(_gameState != GameState::EXIT){
     processInput();
     drawGame();
   }
 }
 
+//Process input with GLFW (messy, not using callbacks)
 void MainGame::processInput()
 {
   glfwPollEvents();
@@ -86,13 +104,16 @@ void MainGame::processInput()
   //cout << "X: " << xpos << "Y: " << ypos << endl;
 }
 
-
+//Draws the game using OpenGL
 void MainGame::drawGame(){
   glClearDepth(1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glEnableClientState(GL_COLOR_ARRAY);
+  _colorProgram.enable();
 
+  _sprite.draw();
+
+  _colorProgram.disable();
 
   glfwSwapBuffers(_mainWindow);
 }

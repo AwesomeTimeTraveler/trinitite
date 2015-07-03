@@ -4,7 +4,7 @@ RM=rm -f
 CPPFLAGS= -std=c++11
 LDLIBS=-lGL -lglfw -lGLEW
 
-SRCS=main.cpp MainGame.cpp
+SRCS=main.cpp MainGame.cpp Sprite.cpp GLSLprogram.cpp errors.cpp
 
 all: main
 
