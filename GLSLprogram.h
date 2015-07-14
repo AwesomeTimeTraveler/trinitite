@@ -16,6 +16,8 @@ public:
 
   void addAttribute(const std::string& attributeName);
 
+  GLint getUniformLocaiton(const std::string& uniformName);
+
   void enable();
   void disable();
 

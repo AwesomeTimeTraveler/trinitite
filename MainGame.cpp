@@ -1,16 +1,19 @@
 #include "MainGame.h"
-#include "errors.h"
+#include "Errors.h"
+#include "ImageLoader.h"
 
+#include <iostream>
 #include <string>
 
 using namespace std;
 
 //Constructor, just initializes private member variables
-MainGame::MainGame(){
-  _mainWindow = nullptr; // Initialized main window
-  _screenWidth = 800;
-  _screenHeight = 600;
-  _gameState = GameState::PLAY;
+MainGame::MainGame() :
+  _mainWindow(nullptr), // Initialized main window
+  _screenWidth(800),
+  _screenHeight(600),
+  _gameState(GameState::PLAY)
+{
 }
 
 //Destructor
@@ -22,8 +25,12 @@ MainGame::~MainGame(){
 void MainGame::run(){
   initSystems();
 
+  printf("OpenGL version supported by this platform (%s): \n", glGetString(GL_VERSION) );
+
   //Initialize our sprite. (temporary)
-  _sprite.init(-1.0f, -1.0f, 1.0f, 1.0f);
+  _sprite.init(-1.0f, -1.0f, 2.0f, 2.0f);
+
+  _playerTexture = ImageLoader::loadPNG("resources/texture/Broccoli.png");
 
   //This only returns when the game ends
   gameLoop();
@@ -66,8 +73,9 @@ void MainGame::initSystems(){
 }
 
 void MainGame::initShaders(){
-  _colorProgram.compileShaders("shaders/colorshader.vert", "shaders/colorshader.frag");
+  _colorProgram.compileShaders("shaders/colorShader.vert", "shaders/colorShader.frag");
   _colorProgram.addAttribute("vertexPosition");
+  _colorProgram.addAttribute("vertexColor");
   _colorProgram.linkShaders();
 }
 
